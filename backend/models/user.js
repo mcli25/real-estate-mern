@@ -33,6 +33,7 @@ const userSchema = new Schema(
       type: String,
       required: true,
       maxLength: 256,
+      minLength: 8,
     },
     address: { type: String, default: "" },
     company: { type: String, default: "" },

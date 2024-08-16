@@ -19,13 +19,21 @@ mongoose.set("strictQuery", false);
 
 app.use(cors());
 app.use(express.json());
+
 app.use(tokenExtractor);
 app.use(userExtractor);
+app.use(requestLogger);
+
 // // app.use("/api/blogs", userExtractor, blogsRouter);
+app.use("/api/", authRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/login", loginRouter);
-app.use("/api/", authRouter);
-app.use(requestLogger);
+
+app.use("*", (req, res) => {
+  console.log("Catch-all route hit:", req.method, req.originalUrl);
+  res.status(404).json({ error: "Not Found" });
+});
+
 app.use(unknownEndpoint);
 app.use(errorHandler);
 

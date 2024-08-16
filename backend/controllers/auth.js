@@ -10,7 +10,6 @@ require("dotenv").config();
 function generateUsername() {
   return "user_" + crypto.randomBytes(3).toString("hex");
 }
-
 authRouter.post("/pre-register", async (request, response, next) => {
   try {
     const { email, password } = request.body;
@@ -30,16 +29,17 @@ authRouter.post("/pre-register", async (request, response, next) => {
     const token = jwt.sign({ email, password }, process.env.SECRET, {
       expiresIn: "1d",
     });
+    console.log("Generated token:", token); // Add this line
 
     const name = "Real Estate App";
     const subject = "Complete Your Registration";
     const confirmationLink = `${process.env.CLIENT_URL}/confirm-registration?token=${token}`;
     const html = `
-        <h1>Welcome to Our Service!</h1>
-        <p>Thank you for pre-registering. To complete your registration, please click on the link below:</p>
-        <a href="${confirmationLink}">Complete Registration</a>
-        <p>If you didn't request this, please ignore this email.</p>
-      `;
+          <h1>Welcome to Our Service!</h1>
+          <p>Thank you for pre-registering. To complete your registration, please click on the link below:</p>
+          <a href="${confirmationLink}">Complete Registration</a>
+          <p>If you didn't request this, please ignore this email.</p>
+        `;
 
     await sendEmail(email, subject, html, name);
 
@@ -51,7 +51,6 @@ authRouter.post("/pre-register", async (request, response, next) => {
     next(error);
   }
 });
-
 authRouter.post("/register", async (request, response, next) => {
   try {
     const decodedToken = jwt.verify(request.body.token, process.env.SECRET);
@@ -83,6 +82,7 @@ authRouter.post("/register", async (request, response, next) => {
 
     response.status(201).json({ token, refreshToken, user: savedUser });
   } catch (error) {
+    console.log(error.message);
     next(error);
   }
 });
@@ -130,7 +130,7 @@ authRouter.post("/forget-password", async (request, response, next) => {
 });
 
 authRouter.post("/access-account", async (request, response, next) => {
-  const { token } = request.body;
+  const { token, newPassword } = request.body;
   if (!token) {
     return response.status(400).json({ error: "Token is required" });
   }
@@ -152,9 +152,11 @@ authRouter.post("/access-account", async (request, response, next) => {
       expiresIn: "7d",
     });
 
+    const passwordHash = await bcrypt.hash(newPassword, 10);
     // Clear reset code fields
     user.resetCode = undefined;
     user.resetCodeExpires = undefined;
+    user.password = passwordHash;
     await user.save();
 
     response.status(200).json({ accessToken, refreshToken, user });
@@ -164,25 +166,32 @@ authRouter.post("/access-account", async (request, response, next) => {
 });
 
 authRouter.get("/refresh-token", async (request, response, next) => {
-  const token = request.token;
+  try {
+    const token = request.token;
 
-  const decodedToken = jwt.verify(token, process.env.SECRET);
-  const { id } = decodedToken;
-  console.log(id);
-  const user = await User.findById(id);
+    const decodedToken = jwt.verify(token, process.env.SECRET);
+    const { id } = decodedToken;
+    console.log(id);
+    const user = await User.findById(id);
+    if (!user) {
+      return response.status(401).json({ error: "User not found" });
+    }
 
-  const userForToken = {
-    username: user.username,
-    id: user._id,
-  };
-  const accessToken = jwt.sign(userForToken, process.env.SECRET, {
-    expiresIn: "1d",
-  });
-  const refreshToken = jwt.sign(userForToken, process.env.SECRET, {
-    expiresIn: "7d",
-  });
+    const userForToken = {
+      username: user.username,
+      id: user._id,
+    };
+    const accessToken = jwt.sign(userForToken, process.env.SECRET, {
+      expiresIn: "1d",
+    });
+    const refreshToken = jwt.sign(userForToken, process.env.SECRET, {
+      expiresIn: "7d",
+    });
 
-  response.status(200).json({ accessToken, refreshToken, user });
+    response.status(200).json({ accessToken, refreshToken, user });
+  } catch (error) {
+    next(error);
+  }
 });
 
 authRouter.put("/update-password", async (request, response, next) => {

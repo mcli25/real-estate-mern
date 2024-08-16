@@ -14,7 +14,6 @@ const unknownEndpoint = (request, response, next) => {
   response.status(404).send({ error: "unknown endpoint" });
   next();
 };
-
 const errorHandler = (error, request, response, next) => {
   logger.error(error.message);
 
@@ -30,7 +29,10 @@ const errorHandler = (error, request, response, next) => {
       .status(400)
       .json({ error: "expected `username` to be unique" });
   } else if (error.name === "JsonWebTokenError") {
-    return response.status(401).json({ error: "token invalid" });
+    // Only return token invalid for routes that require authentication
+    if (request.path !== "/register") {
+      return response.status(401).json({ error: "token invalid" });
+    }
   } else if (error.name === "TokenExpiredError") {
     return response.status(401).json({ error: "token expired" });
   }
@@ -39,6 +41,7 @@ const errorHandler = (error, request, response, next) => {
 };
 
 const tokenExtractor = (request, response, next) => {
+  console.log("TokenExtractor running");
   // code that extracts the token
   const authorization = request.get("authorization");
   if (authorization && authorization.toLowerCase().startsWith("bearer ")) {
@@ -46,6 +49,8 @@ const tokenExtractor = (request, response, next) => {
   } else {
     request.token = null;
   }
+
+  console.log("Extracted token:", request.token);
   next();
 };
 
