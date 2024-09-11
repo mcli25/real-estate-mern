@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: your-frontend-name
+    runtime: static
+    buildCommand: echo "Static site, no build required"
+    staticPublishPath: .
+    envVars:
+      - key: VITE_API_URL
+        value: https://real-estate-mern-backend-65vj.onrender.com/api
+      - key: VITE_MAP_BOX_TOKEN
+        value: pk.eyJ1IjoibWNsZWUyMTIxIiwiYSI6ImNsenliNG1mYTB4N3YybnNiODhld2lhcGgifQ.EuJtAs4dJvSA-ILwYbHDeQ
+    headers:
+      - path: /*
+        name: Cache-Control
+        value: no-cache
