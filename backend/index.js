@@ -1,9 +1,10 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
-// const blogsRouter = require("./controllers/blogs");
 const usersRouter = require("./controllers/users");
 const loginRouter = require("./controllers/login");
+const emailRouter = require("./controllers/email");
+
 const logger = require("./utils/logger");
 const config = require("./utils/config");
 const mongoose = require("mongoose");
@@ -15,6 +16,7 @@ const {
 } = require("./utils/middleware");
 const { userExtractor } = require("./utils/middleware");
 const authRouter = require("./controllers/auth");
+const adRouter = require("./controllers/ad");
 mongoose.set("strictQuery", false);
 
 app.use(cors());
@@ -28,6 +30,8 @@ app.use(requestLogger);
 app.use("/api/", authRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/login", loginRouter);
+app.use("/api/ad", adRouter);
+app.use("/api/send-email", emailRouter);
 
 app.use("*", (req, res) => {
   console.log("Catch-all route hit:", req.method, req.originalUrl);

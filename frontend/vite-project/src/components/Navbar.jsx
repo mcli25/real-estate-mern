@@ -67,6 +67,18 @@ const Navbar = () => {
           </li>
         )}
         {isAuthenticated && (
+          <li className="nav-item">
+            <NavLink
+              to="/dashboard/profile"
+              className={({ isActive }) =>
+                isActive ? "nav-link active" : "nav-link"
+              }
+            >
+              Profile
+            </NavLink>
+          </li>
+        )}
+        {isAuthenticated && (
           <li className="nav-item dropdown" ref={dropdownRef}>
             <button
               onClick={toggleDropdown}
@@ -76,18 +88,23 @@ const Navbar = () => {
             </button>
             <ul className={`dropdown-menu ${isOpen ? "show" : ""}`}>
               <li>
-                <NavLink to="/about" className="dropdown-item">
-                  About
+                <NavLink to="/dashboard/profile" className="dropdown-item">
+                  My Profile
                 </NavLink>
               </li>
               <li>
-                <NavLink to="/contact" className="dropdown-item">
-                  Contact
+                <NavLink to="/dashboard/create-ad" className="dropdown-item">
+                  Create My Ad
                 </NavLink>
               </li>
               <li>
-                <NavLink to="/faq" className="dropdown-item">
-                  FAQ
+                <NavLink to="/dashboard/wishlist" className="dropdown-item">
+                  My Wishlist
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/dashboard/myads" className="dropdown-item">
+                  Manage My Ads
                 </NavLink>
               </li>
               {isAuthenticated && (

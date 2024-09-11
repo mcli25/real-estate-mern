@@ -29,7 +29,6 @@ const errorHandler = (error, request, response, next) => {
       .status(400)
       .json({ error: "expected `username` to be unique" });
   } else if (error.name === "JsonWebTokenError") {
-    // Only return token invalid for routes that require authentication
     if (request.path !== "/register") {
       return response.status(401).json({ error: "token invalid" });
     }
@@ -42,8 +41,8 @@ const errorHandler = (error, request, response, next) => {
 
 const tokenExtractor = (request, response, next) => {
   console.log("TokenExtractor running");
-  // code that extracts the token
-  const authorization = request.get("authorization");
+
+  const authorization = request.get("Authorization");
   if (authorization && authorization.toLowerCase().startsWith("bearer ")) {
     request.token = authorization.substring(7);
   } else {
@@ -55,6 +54,7 @@ const tokenExtractor = (request, response, next) => {
 };
 
 const userExtractor = async (request, response, next) => {
+  console.log("UserExtractor running");
   if (request.token) {
     const decodedToken = jwt.verify(request.token, process.env.SECRET);
     const id = decodedToken.id;
@@ -64,6 +64,8 @@ const userExtractor = async (request, response, next) => {
       return response.status(401).json({ error: "token invalid" });
     }
   }
+  console.log("Extracted user:", request.user);
+
   next();
 };
 

@@ -20,7 +20,6 @@ authRouter.post("/pre-register", async (request, response, next) => {
         .json({ error: "Email and Password are required" });
     }
 
-    // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return response.status(400).json({ error: "Email already registered" });
@@ -29,7 +28,7 @@ authRouter.post("/pre-register", async (request, response, next) => {
     const token = jwt.sign({ email, password }, process.env.SECRET, {
       expiresIn: "1d",
     });
-    console.log("Generated token:", token); // Add this line
+    console.log("Generated token:", token);
 
     const name = "Real Estate App";
     const subject = "Complete Your Registration";
@@ -56,7 +55,6 @@ authRouter.post("/register", async (request, response, next) => {
     const decodedToken = jwt.verify(request.body.token, process.env.SECRET);
     const { email, password } = decodedToken;
 
-    // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return response.status(400).json({ error: "User already registered" });
@@ -92,7 +90,6 @@ authRouter.post("/forget-password", async (request, response, next) => {
     if (!email) {
       return response.status(400).json({ error: "Email is required" });
     }
-    // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (!existingUser) {
       return response
@@ -153,7 +150,7 @@ authRouter.post("/access-account", async (request, response, next) => {
     });
 
     const passwordHash = await bcrypt.hash(newPassword, 10);
-    // Clear reset code fields
+
     user.resetCode = undefined;
     user.resetCodeExpires = undefined;
     user.password = passwordHash;
@@ -165,13 +162,15 @@ authRouter.post("/access-account", async (request, response, next) => {
   }
 });
 
-authRouter.get("/refresh-token", async (request, response, next) => {
+authRouter.post("/refresh-token", async (request, response, next) => {
   try {
-    const token = request.token;
+    const { refreshToken } = request.body;
+    if (!refreshToken) {
+      return response.status(400).json({ error: "Refresh token is required" });
+    }
 
-    const decodedToken = jwt.verify(token, process.env.SECRET);
+    const decodedToken = jwt.verify(refreshToken, process.env.SECRET);
     const { id } = decodedToken;
-    console.log(id);
     const user = await User.findById(id);
     if (!user) {
       return response.status(401).json({ error: "User not found" });
@@ -184,11 +183,13 @@ authRouter.get("/refresh-token", async (request, response, next) => {
     const accessToken = jwt.sign(userForToken, process.env.SECRET, {
       expiresIn: "1d",
     });
-    const refreshToken = jwt.sign(userForToken, process.env.SECRET, {
+    const newRefreshToken = jwt.sign(userForToken, process.env.SECRET, {
       expiresIn: "7d",
     });
 
-    response.status(200).json({ accessToken, refreshToken, user });
+    response
+      .status(200)
+      .json({ token: accessToken, refreshToken: newRefreshToken, user });
   } catch (error) {
     next(error);
   }

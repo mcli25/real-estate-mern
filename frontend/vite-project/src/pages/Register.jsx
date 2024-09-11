@@ -71,118 +71,74 @@ const Register = () => {
       setLoading(false);
     }
   };
-  const buttonStyle = {
-    width: "100%",
-    padding: "12px",
-    backgroundColor: "#4CAF50",
-    color: "white",
-    border: "none",
-    borderRadius: "50px",
-    fontSize: "16px",
-    fontWeight: "bold",
-    cursor: "pointer",
-    marginTop: "20px",
-  };
-
-  const styles = {
-    container: {
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      marginTop: "50px",
-      fontFamily:
-        '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
-    },
-    form: {
-      width: "300px",
-      padding: "20px",
-      borderRadius: "15px",
-      boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
-    },
-    input: {
-      width: "100%",
-      padding: "12px",
-      margin: "10px 0",
-      border: "1px solid #ccc",
-      borderRadius: "4px",
-      fontSize: "14px",
-    },
-    button: buttonStyle,
-    error: {
-      color: "red",
-      marginTop: "10px",
-    },
-    logo: {
-      fontSize: "40px",
-      marginBottom: "20px",
-      color: "#4CAF50",
-    },
-    loginOption: {
-      marginTop: "20px",
-      textAlign: "center",
-      fontSize: "14px",
-    },
-    loginLink: {
-      color: "#4CAF50",
-      textDecoration: "none",
-      fontWeight: "bold",
-    },
-    loadingButton: {
-      ...buttonStyle,
-      opacity: 0.7,
-      cursor: "not-allowed",
-    },
-  };
 
   return (
-    <div style={styles.container}>
-      <div style={styles.logo}>🏠</div>
-      <form onSubmit={handleSubmit} style={styles.form}>
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-          style={styles.input}
-          disabled={loading}
-        />
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={formData.password}
-          onChange={handleChange}
-          required
-          style={styles.input}
-          disabled={loading}
-        />
-        <input
-          type="password"
-          name="confirmPassword"
-          placeholder="Confirm Password"
-          value={formData.confirmPassword}
-          onChange={handleChange}
-          required
-          style={styles.input}
-          disabled={loading}
-        />
-        {error && <p style={styles.error}>{error}</p>}
-        <button
-          type="submit"
-          style={loading ? styles.loadingButton : styles.button}
-          disabled={loading}
-        >
-          {loading ? "Signing up..." : "Sign up"}
-        </button>
-        <div style={styles.loginOption}>
-          Already have an account?{" "}
-          <Link to="/login" style={styles.loginLink}>
-            Log in
-          </Link>
+    <div className="container mt-5">
+      <div className="row justify-content-center">
+        <div className="col-md-6 col-lg-4">
+          <div className="card shadow">
+            <div className="card-body">
+              <div className="text-center mb-4">
+                <h1 className="display-4 text-success">🏠</h1>
+              </div>
+              <form onSubmit={handleSubmit}>
+                <div className="mb-3">
+                  <input
+                    type="email"
+                    className="form-control"
+                    name="email"
+                    placeholder="Email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                    disabled={loading}
+                  />
+                </div>
+                <div className="mb-3">
+                  <input
+                    type="password"
+                    className="form-control"
+                    name="password"
+                    placeholder="Password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    required
+                    disabled={loading}
+                  />
+                </div>
+                <div className="mb-3">
+                  <input
+                    type="password"
+                    className="form-control"
+                    name="confirmPassword"
+                    placeholder="Confirm Password"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    required
+                    disabled={loading}
+                  />
+                </div>
+                {error && <div className="alert alert-danger">{error}</div>}
+                <button
+                  type="submit"
+                  className={`btn btn-success w-100 ${
+                    loading ? "disabled" : ""
+                  }`}
+                  disabled={loading}
+                >
+                  {loading ? "Signing up..." : "Sign up"}
+                </button>
+              </form>
+              <div className="mt-3 text-center">
+                Already have an account?{" "}
+                <Link to="/login" className="text-success fw-bold">
+                  Log in
+                </Link>
+              </div>
+            </div>
+          </div>
         </div>
-      </form>
+      </div>
     </div>
   );
 };
