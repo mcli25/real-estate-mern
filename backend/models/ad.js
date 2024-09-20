@@ -60,7 +60,7 @@ const adSchema = new Schema(
     images: [String],
     rentPeriod: {
       type: String,
-      enum: ["day", "week", "month", "year"],
+      enum: ["month"],
       required: function () {
         return this.type === "rent";
       },

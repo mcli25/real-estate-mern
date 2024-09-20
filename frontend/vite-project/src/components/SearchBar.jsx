@@ -94,7 +94,7 @@ const SearchBar = ({
             <option>For Rent</option>
           </select>
         </div>
-        <div className="col-lg-2 col-md-4">
+        <div className="col-lg-5 col-md-8">
           <select
             className="form-select"
             name="minPrice"
@@ -108,8 +108,6 @@ const SearchBar = ({
               </option>
             ))}
           </select>
-        </div>
-        <div className="col-lg-2 col-md-4">
           <select
             className="form-select"
             name="maxPrice"
@@ -123,21 +121,8 @@ const SearchBar = ({
               </option>
             ))}
           </select>
+          {searchParams.propertyType === "For Rent" && <span>Per Month</span>}
         </div>
-        {/* {searchParams.propertyType === "For Rent" && (
-          <div className="col-lg-2 col-md-4">
-            <select
-              className="form-select"
-              name="rentPeriod"
-              value={searchParams.rentPeriod}
-              onChange={handleInputChange}
-            >
-              <option value="month">Per Month</option>
-              <option value="week">Per Week</option>
-              <option value="day">Per Day</option>
-            </select>
-          </div>
-        )} */}
       </div>
 
       <div className="mt-3">

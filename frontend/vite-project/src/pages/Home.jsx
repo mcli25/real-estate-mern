@@ -5,7 +5,6 @@ import Card from "../components/Card";
 import axios from "axios";
 
 const Home = () => {
-  const { auth, isAuthenticated, signIn, signOut } = useAuth();
   const [searchParams, setSearchParams] = useState({
     location: "",
     propertyType: "For Sale",
@@ -111,7 +110,7 @@ const Home = () => {
                 <p>No houses found matching your criteria.</p>
               )}
             </div>
-            {totalPages > 1 && (
+            {filteredHouses.length > 0 && (
               <nav aria-label="Page navigation">
                 <ul className="pagination justify-content-center">
                   <li

@@ -55,4 +55,4 @@ This project is a full-stack web application for real estate listings and publis
 ## Deployment
 
 This project is deployed on Render. The frontend is hosted at:
-[https://real-estate-mern-pjya.onrender.com/](https://real-estate-mern-pjya.onrender.com/)
+[https://real-estate-mern-pjya.onrender.com/](https://real-estate-mern-pjya.onrender.com/). As I am using the free tier version of render, so it may takes almost 1 minute to load the home page

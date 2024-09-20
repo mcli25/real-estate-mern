@@ -12,8 +12,6 @@ import {
   Calendar,
   DollarSign,
   Heart,
-  Share2,
-  MessageCircle,
   Eye,
 } from "lucide-react";
 import { useAuth } from "../context/auth";
